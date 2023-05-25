@@ -1,7 +1,30 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import ContactData from './ContactData';
 import './ContactList.css';
 
 const ContactList = () => {
+
+  const [contacts , setContacts] = useState([]);
+
+  useEffect(() => {
+    const fetchContacts = async () => {
+      const res = await fetch("https://contact-list-app-18cdb-default-rtdb.asia-southeast1.firebasedatabase.app/contact-list.json");
+      const data = await res.json();
+      const contactsData = [];
+      for(const key in data) {
+        contactsData.push({
+          key: key,
+          name: data[key].name,
+          surname: data[key].surname,
+          tel: data[key].tel
+        });
+      }
+      setContacts(contactsData);
+    }
+    fetchContacts();
+
+  },[contacts]);
+
   return (
     <div className='contact-list'>
       <table>
@@ -14,25 +37,7 @@ const ContactList = () => {
             <th><p>Actions</p></th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>
-              <div className='profile-img-box'>
-                <i className='fa-solid fa-user'></i>
-              </div>
-            </td>
-            <td><h2>John</h2></td>
-            <td><h2>Wan</h2></td>
-            <td><h2>3847281928</h2></td>
-            <td>
-              <div>
-                <i className='fa-solid fa-pen'></i>
-                <i className='fa-solid fa-trash'></i>
-                <i className='fa-solid fa-heart'></i>
-              </div>
-            </td>
-          </tr>
-        </tbody>
+       <ContactData contacts={contacts}/>
       </table>
     </div>
   )
